@@ -205,6 +205,19 @@ def main():
     
     if model_package is None:
         st.error("❌ Could not load the trained model. Please ensure the model file exists in the models/deployment/ directory.")
+        st.info("You can either commit models/deployment/best_model.pkl, set MODEL_URL in Secrets, or upload a .pkl file below.")
+        uploaded = st.file_uploader("Upload trained model (.pkl)", type=["pkl"]) 
+        if uploaded is not None:
+            try:
+                os.makedirs("models/deployment", exist_ok=True)
+                target_path = os.path.join("models/deployment", "best_model.pkl")
+                with open(target_path, "wb") as out:
+                    out.write(uploaded.read())
+                st.success("✅ Model uploaded. Reloading app...")
+                st.cache_resource.clear()
+                st.rerun()
+            except Exception as up_err:
+                st.error(f"Failed to save uploaded model: {up_err}")
         st.stop()
     
     # Model info
