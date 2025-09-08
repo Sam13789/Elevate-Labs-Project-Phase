@@ -24,47 +24,39 @@ px.defaults.color_discrete_sequence = ["#87CEEB", "#FF5A5F", "#484848"]
 @st.cache_resource
 def load_model():
     try:
-        # Check for required ML libraries
-        missing_libs = []
-        try:
-            import lightgbm
-        except ImportError:
-            missing_libs.append("lightgbm")
-        
-        try:
-            import xgboost
-        except ImportError:
-            missing_libs.append("xgboost")
-            
-        try:
-            import catboost
-        except ImportError:
-            missing_libs.append("catboost")
-        
-        if missing_libs:
-            st.error(f"❌ Missing required libraries: {', '.join(missing_libs)}")
-            st.info("🔧 Please install missing libraries:")
-            st.code(f"pip install {' '.join(missing_libs)}")
-            st.info("Then restart the Streamlit app.")
-            return None, None
-        
-        # Find the latest model file
         model_dir = "models/deployment/"
-        if os.path.exists(model_dir):
-            model_files = [f for f in os.listdir(model_dir) if f.startswith("airbnb_price_model_") and f.endswith(".pkl")]
-            if model_files:
-                latest_model = sorted(model_files)[-1]
-                model_path = os.path.join(model_dir, latest_model)
-                
-                with open(model_path, 'rb') as f:
-                    model_package = pickle.load(f)
-                
-                return model_package, model_path
-        return None, None
+        if not os.path.exists(model_dir):
+            st.error("models/deployment/ directory not found.")
+            st.caption(f"CWD: {os.getcwd()}")
+            return None, None
+
+        model_files = [
+            f for f in os.listdir(model_dir)
+            if f.startswith("airbnb_price_model_") and f.endswith(".pkl")
+        ]
+        if not model_files:
+            st.error("No model files found in models/deployment/.")
+            st.caption(f"Found files: {os.listdir(model_dir)}")
+            return None, None
+
+        latest_model = sorted(model_files)[-1]
+        model_path = os.path.join(model_dir, latest_model)
+
+        try:
+            with open(model_path, 'rb') as f:
+                model_package = pickle.load(f)
+            return model_package, model_path
+        except ModuleNotFoundError as e:
+            missing_module = str(e).split("No module named ")[-1].strip("'\"")
+            st.error(f"Missing Python library required by the saved model: {missing_module}")
+            st.code(f"pip install {missing_module}")
+            return None, None
+        except Exception as e:
+            st.error(f"Error unpickling model: {e}")
+            return None, None
+
     except Exception as e:
         st.error(f"Error loading model: {e}")
-        st.info("🔧 This might be due to missing ML libraries. Try installing:")
-        st.code("pip install lightgbm xgboost catboost")
         return None, None
 
 # Feature engineering function (simplified version for prediction)
