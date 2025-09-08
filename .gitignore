@@ -1,34 +1,42 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.pyo
-
-# Jupyter notebooks
-.ipynb_checkpoints/
-.notebooks_cache/
-
-# Project-specific
-notebooks/__pycache__/
-notebooks/catboost_info/
-
-# OS files
+# OS
 .DS_Store
 Thumbs.db
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
 
 # Environments
 .env
 .venv/
 venv/
+env/
+.python-version
+
+# Jupyter
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+notebooks/**/__pycache__/
+notebooks/catboost_info/
 
 # Streamlit
-.streamlit/secrets.toml
 .streamlit/
+.streamlit_cache/
+.cache/
+
+# Tools caches
+.mypy_cache/
+.pytest_cache/
+coverage/
 
 # Logs
 logs/
 *.log
 
-# Models (ignore binaries; keep folder with .gitkeep)
-models/deployment/*.pkl
-!models/deployment/best_model.pkl
+# Editors/IDE
+.vscode/
+.idea/

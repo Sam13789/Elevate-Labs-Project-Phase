@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
-import requests
 from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
@@ -49,67 +48,18 @@ def load_model():
             st.info("Then restart the Streamlit app.")
             return None, None
         
-        # Ensure model directory exists
+        # Find the latest model file
         model_dir = "models/deployment/"
-        os.makedirs(model_dir, exist_ok=True)
-
-        # Try specific whitelisted filename first
-        preferred_name = os.path.join(model_dir, "best_model.pkl")
-
-        # If missing, optionally download from MODEL_URL env var
-        if not os.path.exists(preferred_name):
-            model_url = os.environ.get("MODEL_URL") or st.secrets.get("MODEL_URL", None)
-            if model_url:
-                try:
-                    with st.spinner("⬇️ Downloading model..."):
-                        resp = requests.get(model_url, timeout=60)
-                        resp.raise_for_status()
-                        with open(preferred_name, "wb") as f:
-                            f.write(resp.content)
-                except Exception as dl_err:
-                    st.warning(f"Couldn't download model from MODEL_URL: {dl_err}")
-
-        # If preferred file exists, load it
-        if os.path.exists(preferred_name):
-            with open(preferred_name, 'rb') as f:
-                model_package = pickle.load(f)
-            return model_package, preferred_name
-
-        # Fallback: find any .pkl in models/deployment
         if os.path.exists(model_dir):
-            model_files = [f for f in os.listdir(model_dir) if f.endswith(".pkl")]
+            model_files = [f for f in os.listdir(model_dir) if f.startswith("airbnb_price_model_") and f.endswith(".pkl")]
             if model_files:
-                # Prefer names containing "model"
-                preferred = [f for f in model_files if "model" in f.lower()]
-                chosen = sorted(preferred or model_files)[-1]
-                model_path = os.path.join(model_dir, chosen)
+                latest_model = sorted(model_files)[-1]
+                model_path = os.path.join(model_dir, latest_model)
+                
                 with open(model_path, 'rb') as f:
                     model_package = pickle.load(f)
+                
                 return model_package, model_path
-
-        # Last resort: scan the repo for any .pkl model
-        search_roots = [
-            ".",
-            "models",
-            "models/deployment",
-        ]
-        found_paths = []
-        for root in search_roots:
-            if not os.path.exists(root):
-                continue
-            for dirpath, dirnames, filenames in os.walk(root):
-                for name in filenames:
-                    if name.lower().endswith('.pkl'):
-                        full = os.path.join(dirpath, name)
-                        found_paths.append(full)
-        if found_paths:
-            # Prefer files with 'model' in name, then pick latest by name
-            preferred = [p for p in found_paths if 'model' in os.path.basename(p).lower()]
-            chosen_path = sorted(preferred or found_paths)[-1]
-            with open(chosen_path, 'rb') as f:
-                model_package = pickle.load(f)
-            return model_package, chosen_path
-
         return None, None
     except Exception as e:
         st.error(f"Error loading model: {e}")
@@ -230,19 +180,6 @@ def main():
     
     if model_package is None:
         st.error("❌ Could not load the trained model. Please ensure the model file exists in the models/deployment/ directory.")
-        st.info("You can either commit models/deployment/best_model.pkl, set MODEL_URL in Secrets, or upload a .pkl file below.")
-        uploaded = st.file_uploader("Upload trained model (.pkl)", type=["pkl"]) 
-        if uploaded is not None:
-            try:
-                os.makedirs("models/deployment", exist_ok=True)
-                target_path = os.path.join("models/deployment", "best_model.pkl")
-                with open(target_path, "wb") as out:
-                    out.write(uploaded.read())
-                st.success("✅ Model uploaded. Reloading app...")
-                st.cache_resource.clear()
-                st.rerun()
-            except Exception as up_err:
-                st.error(f"Failed to save uploaded model: {up_err}")
         st.stop()
     
     # Model info
