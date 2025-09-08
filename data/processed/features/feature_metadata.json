@@ -1,0 +1,45 @@
+{
+  "selected_features": [
+    "ng__neighbourhood_group_Brooklyn",
+    "ng__neighbourhood_group_Manhattan",
+    "location__latitude",
+    "location__longitude",
+    "location__distance_to_manhattan",
+    "location__location_cluster_3",
+    "location__location_cluster_5",
+    "location__location_cluster_10",
+    "room__room_type_Entire home/apt",
+    "room__room_type_Private room",
+    "room__privacy_score",
+    "nights__min_nights_log",
+    "n_review__reviews_log",
+    "last_review__review_year",
+    "last_review__days_since_last_review",
+    "host__host_type_professional_host",
+    "host__listings_log",
+    "availability__availability_pct",
+    "availability__is_rarely_available",
+    "availability__availability_log",
+    "neighbourhood__neighbourhood_Midtown"
+  ],
+  "n_features": 21,
+  "feature_selection_method": "majority_vote",
+  "threshold_methods": [
+    "single_performance",
+    "mutual_info",
+    "f_statistic",
+    "tree_based"
+  ],
+  "train_shape": [
+    30949,
+    21
+  ],
+  "val_shape": [
+    7738,
+    21
+  ],
+  "test_shape": [
+    9672,
+    21
+  ]
+}

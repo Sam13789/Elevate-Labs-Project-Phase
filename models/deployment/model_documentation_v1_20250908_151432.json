@@ -1,0 +1,28 @@
+{
+  "model_info": {
+    "name": "Stacking Ensemble",
+    "version": "v1_20250908_151432",
+    "created_date": "2025-09-08T15:14:32.420628",
+    "model_type": "stacking_ensemble"
+  },
+  "performance": {},
+  "training_info": {
+    "features_used": 26,
+    "training_samples": 30949,
+    "validation_samples": 7738,
+    "test_samples": 9672,
+    "feature_engineering": "Log transformation + ensemble feature selection",
+    "target_transformation": "np.log1p() - log transformation"
+  },
+  "usage_instructions": {
+    "input_format": "Feature-engineered DataFrame with 26 columns",
+    "output_format": "Original price scale (USD)",
+    "prediction_conversion": "Model predicts log(price+1), convert with np.expm1()",
+    "expected_error": "TBD"
+  },
+  "deployment_files": {
+    "model": "../models/deployment/airbnb_price_model_v1_20250908_151432.pkl",
+    "inference_pipeline": "../models/deployment/inference_pipeline_v1_20250908_151432.py",
+    "documentation": "../models/deployment/model_documentation_v1_20250908_151432.json"
+  }
+}

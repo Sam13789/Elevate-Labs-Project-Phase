@@ -1,0 +1,2 @@
+# Keep this directory to store trained model artifacts for the Streamlit app.
+# Model binaries (.pkl) are ignored via .gitignore.

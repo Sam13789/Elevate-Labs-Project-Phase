@@ -1,0 +1,105 @@
+{
+  "feature_engineering": {
+    "original_features": 11,
+    "engineered_features": 115,
+    "selected_features": 26,
+    "selected_feature_names": [
+      "feature_0",
+      "feature_1",
+      "feature_3",
+      "feature_20",
+      "feature_29",
+      "feature_30",
+      "feature_31",
+      "feature_35",
+      "feature_37",
+      "feature_42",
+      "feature_52",
+      "feature_53",
+      "feature_55",
+      "feature_56",
+      "feature_64",
+      "feature_70",
+      "feature_74",
+      "feature_76",
+      "feature_88",
+      "feature_96",
+      "feature_97",
+      "feature_98",
+      "feature_101",
+      "feature_102",
+      "feature_113",
+      "feature_114"
+    ],
+    "selected_feature_indices": [
+      0,
+      1,
+      3,
+      20,
+      29,
+      30,
+      31,
+      35,
+      37,
+      42,
+      52,
+      53,
+      55,
+      56,
+      64,
+      70,
+      74,
+      76,
+      88,
+      96,
+      97,
+      98,
+      101,
+      102,
+      113,
+      114
+    ],
+    "feature_expansion_ratio": 10.454545454545455,
+    "feature_reduction_pct": 77.39130434782608
+  },
+  "target_transformation": {
+    "method": "log1p",
+    "original_skewness": 19.2113754266264,
+    "transformed_skewness": 0.6047614208111043,
+    "original_range": [
+      10.0,
+      10000.0
+    ],
+    "transformed_range": [
+      2.3978952727983707,
+      9.210440366976517
+    ]
+  },
+  "feature_selection": {
+    "methods": [
+      "single_performance",
+      "mutual_info",
+      "f_statistic",
+      "tree_based"
+    ],
+    "strategy": "majority_vote",
+    "threshold": 0.1,
+    "best_feature_score": 0.3885404348609885
+  },
+  "dataset_shapes": {
+    "train": [
+      30949,
+      26
+    ],
+    "val": [
+      7738,
+      26
+    ],
+    "test": [
+      9672,
+      26
+    ]
+  },
+  "pipeline_version": "1.0",
+  "created_date": "2025-09-08T14:50:20.970128"
+}

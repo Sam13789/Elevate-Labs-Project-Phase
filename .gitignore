@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+.notebooks_cache/
+
+# Project-specific
+notebooks/__pycache__/
+notebooks/catboost_info/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environments
+.env
+.venv/
+venv/
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/
+
+# Logs
+logs/
+*.log
+
+# Models (ignore binaries; keep folder with .gitkeep)
+models/deployment/*.pkl
