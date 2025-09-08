@@ -31,3 +31,4 @@ logs/
 
 # Models (ignore binaries; keep folder with .gitkeep)
 models/deployment/*.pkl
+!models/deployment/best_model.pkl

@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
+import requests
 from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
@@ -15,7 +16,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# NOTE: Custom CSS removed per user request to use Streamlit defaults
 
 # Set a consistent Plotly template and colorway (safe defaults)
 px.defaults.template = "plotly_white"
@@ -49,18 +49,42 @@ def load_model():
             st.info("Then restart the Streamlit app.")
             return None, None
         
-        # Find the latest model file
+        # Ensure model directory exists
         model_dir = "models/deployment/"
+        os.makedirs(model_dir, exist_ok=True)
+
+        # Try specific whitelisted filename first
+        preferred_name = os.path.join(model_dir, "best_model.pkl")
+
+        # If missing, optionally download from MODEL_URL env var
+        if not os.path.exists(preferred_name):
+            model_url = os.environ.get("MODEL_URL") or st.secrets.get("MODEL_URL", None)
+            if model_url:
+                try:
+                    with st.spinner("⬇️ Downloading model..."):
+                        resp = requests.get(model_url, timeout=60)
+                        resp.raise_for_status()
+                        with open(preferred_name, "wb") as f:
+                            f.write(resp.content)
+                except Exception as dl_err:
+                    st.warning(f"Couldn't download model from MODEL_URL: {dl_err}")
+
+        # If preferred file exists, load it
+        if os.path.exists(preferred_name):
+            with open(preferred_name, 'rb') as f:
+                model_package = pickle.load(f)
+            return model_package, preferred_name
+
+        # Fallback: find latest timestamped model file
         if os.path.exists(model_dir):
-            model_files = [f for f in os.listdir(model_dir) if f.startswith("airbnb_price_model_") and f.endswith(".pkl")]
+            model_files = [f for f in os.listdir(model_dir) if f.endswith(".pkl")]
             if model_files:
                 latest_model = sorted(model_files)[-1]
                 model_path = os.path.join(model_dir, latest_model)
-                
                 with open(model_path, 'rb') as f:
                     model_package = pickle.load(f)
-                
                 return model_package, model_path
+
         return None, None
     except Exception as e:
         st.error(f"Error loading model: {e}")
