@@ -75,15 +75,40 @@ def load_model():
                 model_package = pickle.load(f)
             return model_package, preferred_name
 
-        # Fallback: find latest timestamped model file
+        # Fallback: find any .pkl in models/deployment
         if os.path.exists(model_dir):
             model_files = [f for f in os.listdir(model_dir) if f.endswith(".pkl")]
             if model_files:
-                latest_model = sorted(model_files)[-1]
-                model_path = os.path.join(model_dir, latest_model)
+                # Prefer names containing "model"
+                preferred = [f for f in model_files if "model" in f.lower()]
+                chosen = sorted(preferred or model_files)[-1]
+                model_path = os.path.join(model_dir, chosen)
                 with open(model_path, 'rb') as f:
                     model_package = pickle.load(f)
                 return model_package, model_path
+
+        # Last resort: scan the repo for any .pkl model
+        search_roots = [
+            ".",
+            "models",
+            "models/deployment",
+        ]
+        found_paths = []
+        for root in search_roots:
+            if not os.path.exists(root):
+                continue
+            for dirpath, dirnames, filenames in os.walk(root):
+                for name in filenames:
+                    if name.lower().endswith('.pkl'):
+                        full = os.path.join(dirpath, name)
+                        found_paths.append(full)
+        if found_paths:
+            # Prefer files with 'model' in name, then pick latest by name
+            preferred = [p for p in found_paths if 'model' in os.path.basename(p).lower()]
+            chosen_path = sorted(preferred or found_paths)[-1]
+            with open(chosen_path, 'rb') as f:
+                model_package = pickle.load(f)
+            return model_package, chosen_path
 
         return None, None
     except Exception as e:
