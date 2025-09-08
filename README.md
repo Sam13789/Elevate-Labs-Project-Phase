@@ -2,6 +2,9 @@
 
 End-to-end ML project to predict Airbnb nightly prices in NYC, including feature engineering, model training/selection, and a Streamlit web app for inference.
 
+## Live App
+- Deployed on Streamlit Cloud: https://airbnb1378.streamlit.app/
+
 ## Project Structure
 - `data/raw/`: Original dataset (`AB_NYC_2019.csv`)
 - `data/processed/`: Clean splits (`train.csv`, `val.csv`, `test.csv`)
